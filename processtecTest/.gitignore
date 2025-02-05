@@ -1,0 +1,23 @@
+﻿# Arquivos de configuração sensíveis
+*.config
+*.json
+*.xml
+
+# Credenciais e chaves
+*.key
+*.pem
+*.p12
+
+# Arquivos de log
+*.log
+
+# Diretórios de build
+bin/
+obj/
+
+# Arquivos específicos do Rider
+.idea/
+*.sln.iml
+
+# Arquivo de variáveis de ambiente
+.env
