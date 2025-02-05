@@ -10,9 +10,14 @@ namespace processtecTest
         {
             try
             {
+                Console.WriteLine("Olá, você está conectado ao banco de dados da processtec.");
+                Console.WriteLine($"Horário atual: {DateTime.Now}");
                 Console.WriteLine("Iniciando a verificação das tabelas...");
+
                 await VerificarTabelas();
+
                 Console.WriteLine("Verificação das tabelas concluída.");
+                Console.WriteLine("Obrigado por utilizar nosso sistema!");
             }
             catch (Exception ex)
             {
@@ -25,7 +30,6 @@ namespace processtecTest
             try
             {
                 await using var connection = await DbConnection.GetConnection();
-
                 var query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';";
                 await using var command = new NpgsqlCommand(query, connection);
                 await using var reader = await command.ExecuteReaderAsync();
@@ -35,14 +39,8 @@ namespace processtecTest
                 {
                     var tableName = reader.GetString(0);
                     Console.WriteLine($"Tabela: {tableName}");
-
-                    // Obter e exibir informações detalhadas da tabela
                     await ExibirInformacoesTabela(connection, tableName);
                 }
-            }
-            catch (NpgsqlException ex)
-            {
-                Console.WriteLine($"Erro ao executar a consulta no banco de dados: {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -54,36 +52,65 @@ namespace processtecTest
         {
             try
             {
-                // Exibir colunas da tabela
-                var colunasQuery = $"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{tableName}';";
-                await using var colunasCommand = new NpgsqlCommand(colunasQuery, connection);
-                await using var colunasReader = await colunasCommand.ExecuteReaderAsync();
-
-                Console.WriteLine($"Colunas da tabela {tableName}:");
-                while (await colunasReader.ReadAsync())
-                {
-                    Console.WriteLine($"Coluna: {colunasReader.GetString(0)}, Tipo: {colunasReader.GetString(1)}");
-                }
-                colunasReader.Close();
-
-                // Exibir índices da tabela
-                var indicesQuery = $"SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '{tableName}';";
-                await using var indicesCommand = new NpgsqlCommand(indicesQuery, connection);
-                await using var indicesReader = await indicesCommand.ExecuteReaderAsync();
-
-                Console.WriteLine($"Índices da tabela {tableName}:");
-                while (await indicesReader.ReadAsync())
-                {
-                    Console.WriteLine($"Índice: {indicesReader.GetString(0)}, Definição: {indicesReader.GetString(1)}");
-                }
-                indicesReader.Close();
-
-                // Exibir conteúdo da tabela
+                await ExibirColunas(connection, tableName);
+                await ExibirIndices(connection, tableName);
                 await ExibirConteudoTabela(connection, tableName);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao exibir informações da tabela {tableName}: {ex.Message}");
+                Console.WriteLine($"Erro ao exibir informações da tabela '{tableName}': {ex.Message}");
+            }
+        }
+
+        private static async Task ExibirColunas(NpgsqlConnection connection, string tableName)
+        {
+            try
+            {
+                var query = $"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{tableName}';";
+                await using var command = new NpgsqlCommand(query, connection);
+                await using var reader = await command.ExecuteReaderAsync();
+
+                Console.WriteLine($"Colunas da tabela {tableName}:");
+                while (await reader.ReadAsync())
+                {
+                    Console.WriteLine($"Coluna: {reader.GetString(0)}, Tipo: {reader.GetString(1)}");
+                }
+
+                using (var cmd = new NpgsqlCommand("SELECT column_name FROM information_schema.columns WHERE table_name = @tableName", connection))
+                {
+                    cmd.Parameters.AddWithValue("tableName", tableName);
+                    using (var reader2 = cmd.ExecuteReader())
+                    {
+                        while (reader2.Read())
+                        {
+                            Console.WriteLine($"  - {reader2["column_name"]}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao exibir colunas da tabela '{tableName}': {ex.Message}");
+            }
+        }
+
+        private static async Task ExibirIndices(NpgsqlConnection connection, string tableName)
+        {
+            try
+            {
+                var query = $"SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '{tableName}';";
+                await using var command = new NpgsqlCommand(query, connection);
+                await using var reader = await command.ExecuteReaderAsync();
+
+                Console.WriteLine($"Índices da tabela {tableName}:");
+                while (await reader.ReadAsync())
+                {
+                    Console.WriteLine($"Índice: {reader.GetString(0)}, Definição: {reader.GetString(1)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao exibir índices da tabela '{tableName}': {ex.Message}");
             }
         }
 
@@ -107,7 +134,7 @@ namespace processtecTest
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao exibir conteúdo da tabela {tableName}: {ex.Message}");
+                Console.WriteLine($"Erro ao exibir conteúdo da tabela '{tableName}': {ex.Message}");
             }
         }
     }

@@ -10,22 +10,17 @@ namespace processtecTest
     {
         public static async Task<NpgsqlConnection> GetConnection()
         {
+            string connectionString = DotNetEnv.Env.GetString("DATABASE_URL");
+            var connection = new NpgsqlConnection(connectionString);
             try
             {
-                // Carrega as variáveis de ambiente do arquivo .env
-                DotNetEnv.Env.Load();
-
-                var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
-                var connection = new NpgsqlConnection(connectionString);
                 await connection.OpenAsync();
-
-                Log.Information("Conexão com o banco de dados estabelecida com sucesso.");
+                Log.Information("Conexão com o banco de dados aberta com sucesso.");
                 return connection;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Erro ao estabelecer conexão com o banco de dados");
+                Log.Error(ex, "Erro ao abrir a conexão com o banco de dados.");
                 throw;
             }
         }
