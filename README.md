@@ -1,26 +1,50 @@
-## Sobre
+# processtecTest
 
-Este repositório contém um projeto em C# que se conecta a um banco de dados PostgreSQL para realizar consultas e exibir informações sobre as tabelas e seus conteúdos. O projeto utiliza a biblioteca `Npgsql` para a comunicação com o banco de dados.
+## Descrição
 
-### Funcionalidades
+Este projeto é uma aplicação .NET que se conecta a um banco de dados PostgreSQL para verificar e exibir informações sobre as tabelas existentes. Ele utiliza as bibliotecas [DotNetEnv](https://www.nuget.org/packages/DotNetEnv), [Npgsql](https://www.nuget.org/packages/Npgsql), [Serilog](https://www.nuget.org/packages/Serilog) e [Supabase](https://www.nuget.org/packages/supabase).
 
-- Conexão com o banco de dados PostgreSQL
-- Verificação das tabelas existentes no banco de dados
-- Exibição das colunas e índices de cada tabela
-- Exibição do conteúdo das tabelas
+## Pré-requisitos
 
-### Tecnologias Utilizadas
+- [.NET SDK 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- Um banco de dados PostgreSQL configurado e acessível.
 
-- C#
-- Npgsql
-- .NET
+## Configuração
 
-### Como Executar
+1.  Clone o repositório:
 
-1. Clone o repositório.
-2. Configure as credenciais do banco de dados no arquivo `.env`.
-3. Execute o projeto utilizando o comando `dotnet run`.
+    ```sh
+    git clone <URL do repositório>
+    cd processtecTest
+    ```
 
-### Contribuição
+2.  Crie um arquivo [.env](http://_vscodecontentref_/0) na raiz do projeto e configure a string de conexão com o banco de dados:
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+    ```
+    DATABASE_URL="Host=<seu_host>;Database=<seu_banco>;Username=<seu_usuario>;Password=<sua_senha>"
+    ```
+
+    Substitua `<seu_host>`, `<seu_banco>`, `<seu_usuario>` e `<sua_senha>` pelas informações do seu banco de dados.
+
+## Como executar
+
+1.  Restaure as dependências do projeto:
+
+    ```sh
+    dotnet restore
+    ```
+
+2.  Execute o projeto:
+
+    ```sh
+    dotnet run
+    ```
+
+## Dependências
+
+*   [DotNetEnv](https://www.nuget.org/packages/DotNetEnv) - Para carregar variáveis de ambiente do arquivo [.env](http://_vscodecontentref_/1).
+*   [Npgsql](https://www.nuget.org/packages/Npgsql) - Provider .NET para PostgreSQL.
+*   [Serilog](https://www.nuget.org/packages/Serilog) - Para logging.
+*   [Supabase](https://www.nuget.org/packages/supabase) - Client para Supabase.
+
+## Estrutura do projeto
