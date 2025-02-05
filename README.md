@@ -14,7 +14,7 @@ Este projeto é uma aplicação .NET que se conecta a um banco de dados PostgreS
 1.  Clone o repositório:
 
     ```sh
-    git clone <URL do repositório>
+    git clone <https://github.com/victorbrandaao/processtecTest.git>
     cd processtecTest
     ```
 
